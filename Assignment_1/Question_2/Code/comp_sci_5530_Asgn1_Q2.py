@@ -16,26 +16,60 @@ q2df=pd.read_csv('sample_data/StudentsPerformance.csv')
 #a.	Question: Are there gender differences in math vs reading?
 #b.	Chart: Side‑by‑side boxplots of math score and reading score grouped by gender.
 
-#ToDo: Grouped by Gender, or Filtered by Gender? A box plot uses min/max/mean to showcase the distribution. Aggregation doesn't seem right.
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+#Question #2
+q2df=pd.read_csv('sample_data/StudentsPerformance.csv')
 
+
+#Gender boxplots (math vs reading) (2 pts)
+#a.	Question: Are there gender differences in math vs reading?
+#b.	Chart: Side‑by‑side boxplots of math score and reading score grouped by gender
+
+#First, separate the data into male/female data frames
 pop_male = q2df[q2df['gender'] =='male']
 pop_female = q2df[q2df['gender'] =='female']
 
-math_score = q2df['math score']
-reading_score = q2df['reading score']
+#Box plot is obtained by using the first quartile (Q1) to the third quartile (Q3) of the data, with a line at the median
+#   Source: https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.boxplot.html
 
-pop_male_math = pop_male['math score']
-pop_male_read = pop_male['reading_score']
-mvr_male = [pop_male_math, pop_male_read]   #Debug: Why is this not working?
-#mvr_female = [pop_female['math score'],pop_female['reading_score']]
-#plt.boxplot(mvr_male)
+#Organize data for the math score
+math_scores_male = pop_male['math score']
+math_scores_female = pop_female['math score']
+mathdata_multiple = [math_scores_male, math_scores_female]
 
-#plt.boxplot(mathVreading)
-#data_multiple = [data_1, data_2]
+#Organize data for the reading score
+read_scores_male = pop_male['reading score']
+read_scores_female = pop_female['reading score']
+readdata_multiple = [read_scores_male, read_scores_female]
 
-#plt.boxplot(data) # For a single boxplot
-    # Or for multiple boxplots:
-#plt.boxplot(data_multiple)
+#Create a figure with two subplots (1 row, 2 columns)
+dpi = 300
+width = 800/dpi
+height = 600/dpi
+fig, (ax1, ax2) = plt.subplots(ncols=2, figsize=(width,height), dpi=300)
+ #, dpi=300)
+
+#Plot the Math box plot on ax1
+ax1.boxplot(mathdata_multiple)
+ax1.set_title('Math Scores by Gender')
+ax1.set_ylabel('Math Score')
+ax1.set_xticklabels(['Male', 'Female'])
+
+#Plot the Reading box plot on ax2
+ax2.boxplot(readdata_multiple)
+ax2.set_title('Reading Scores by Gender')
+ax2.set_ylabel('Reading Score')
+
+ax2.set_xticklabels(['Male', 'Female'])
+
+JVinasComment = "JVinas Note: The data shows that for math, males score higher than females. This trend is reversed when it comes to reading scores."
+text = fig.text(0.5, 0, JVinasComment, horizontalalignment='center', wrap=True, font = {'size':3})
+
+plt.tight_layout()  #Use the tight layout to prevent overlapping titles/labels
+plt.rcParams.update({'font.size': 5})
+plt.show()
 
 #B.	V2 — Test prep impact on math (2 pts)
 #a.	Question: Do students who completed test prep score higher in math?
