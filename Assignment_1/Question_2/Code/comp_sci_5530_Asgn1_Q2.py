@@ -124,9 +124,58 @@ plt.title('Correlation Heatmap for test scores')
 plt.show()
 
 #------------------------------------------------------------------
-#E.	V5 — Math vs reading with trend lines by test prep (2 pts)
-#a.	Question: How strongly are math and reading scores associated, and do students who completed the test‑preparation course have a different slope in the math–reading relationship than those who did not?
-#b.	Chart: Scatter plot with two straight best‑fit lines (one for each group: completed, none).
-#i.	X‑axis: reading score 
-#ii.	Y‑axis: math score
-#c.	Color: Points colored by test preparation course (legend must show the two groups and each group’s n).
+#E:	Visualization #5 — Math vs reading with trend lines by test prep (2 pts)
+#Ea.	Question: How strongly are math and reading scores associated, and do students who completed the test‑preparation course have a different slope in the math–reading relationship than those who did not?
+#Eb.	Chart: Scatter plot with two straight best‑fit lines (one for each group: completed, none).
+#Ebi.	X‑axis: reading score 
+#Ebii.	Y‑axis: math score
+#Ec.	Color: Points colored by test preparation course (legend must show the two groups and each group’s n).
+
+completed_true = q2df[q2df['test preparation course'] =='completed']
+completed_false = q2df[q2df['test preparation course'] =='none']
+
+x1 = completed_true['reading score']
+y1 = completed_true['math score']
+x2 = completed_false['reading score']
+y2 = completed_false['math score']
+
+dpi = 300
+figwidth = 800/dpi
+figheight = 600/dpi
+plt.figure(figsize=(figwidth, figheight),dpi=300)
+
+# Create the scatter plot
+plt.scatter(x1, y1, marker='o', label='Completed', color='lightgreen')
+plt.scatter(x2, y2, marker='^', label='None', color='orange', alpha=0.25)
+
+#Calculate the line of best fit using numpy.polyfit() using a first-order polynomial for a straight line
+slope1, intercept1 = np.polyfit(x1, y1, 1)  
+slope2, intercept2 = np.polyfit(x2, y2, 1)
+slope = 1.0
+intercept = 1.0
+
+#Create a line of perfect association
+x_line = np.linspace(0,100,100) #Create 100 points from 0 to 100
+line_y = slope * x_line + intercept
+
+#Generate points for this best-fit line
+line_y1 = slope1 * x1 + intercept1          
+line_y2 = slope2 * x2 + intercept2
+
+#Plot the Lines
+plt.plot(x_line, line_y, color='blue', linestyle='--', label='Perfect (Best-fit)')
+plt.plot(x1, line_y1, color='green', linestyle='--', label='Completed (Best-fit)')
+plt.plot(x2, line_y2, color='red', linestyle='--', label='None (Best-fit)')
+
+#Ea.	Question: How strongly are math and reading scores associated, and do students who completed the test‑preparation course have a different slope in the math–reading relationship than those who did not?
+JVinasComment = "JVinas Note: \nMath & Reading scores are closely related, with most students tending to score lower in math. \nCompleting the test-prep does not strongly move a student towards a higher score in either subject. \nIt does tend to result in higher average scores overall."
+text = plt.text(0.5, 3.75, JVinasComment, horizontalalignment='left', wrap=True, bbox=dict(boxstyle='square,pad=0.5', fc='lightblue', ec='blue'), font={'size':3})
+
+# Add title and labels
+plt.title("Math to Reading Score based on Test-Prep")
+plt.xlabel("Reading Score")
+plt.ylabel("Math Score")
+plt.legend()
+
+# Display the plot
+plt.show()
