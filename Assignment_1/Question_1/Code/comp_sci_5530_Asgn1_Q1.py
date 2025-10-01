@@ -1,11 +1,23 @@
 from sklearn.preprocessing import OneHotEncoder
-import pandas as pd
-import numpy as np
+import os                       #Used to manage file system
+import urllib.request           #Used to obtain file from GitHub
+import pandas as pd             #Used for data manipulation
+import numpy as np              #Used for numerical calculations
 
-#--Question #1--
-#Stage 1: Ingest
-df=pd.read_csv('sample_data/frailty_data.csv')
+#Question #1
+#===========Stage 1: Ingestion===========
+source_file_url = "https://raw.githubusercontent.com/joelvinas/COMP-SCI_5530/1111a173b9fffb6950992d13a6489c183bb7532a/Assignment_1/Question_1/Data/frailty_data.csv"
+destination_path = "/tmp/frailty_data.csv" # Use a temporary path
 
+# Download the file
+try:
+    urllib.request.urlretrieve(source_file_url, destination_path)
+    print(f"Source File downloaded successfully to: {destination_path}")
+except Exception as e:
+    print(f"Error downloading source file: {e}")
+
+df=pd.read_csv(destination_path)
+#===========Stage 2: Pre-Processing===========
 
 #Clean up field names to remove non-breaking spaces & leading/trailing spaces
 for curCol in df.columns:
@@ -23,6 +35,8 @@ df['Grip strength'] = df['Grip strength'].astype(int)
 
 #Rename Grip Strength
 df.rename(columns={'Grip strength': 'Grip_kg'}, inplace=True)
+
+#===========Stage 3: Analyze===========
 
 #3a:   Unit Standardization
 df['Height_m'] = (df['Height_in'] * 0.0254).apply(pd.to_numeric, errors='coerce')
@@ -46,23 +60,31 @@ def AgeGroups(Age):
 df['AgeGroup (categorical)'] = df['Age_yr'].apply(AgeGroups)
 
 #3c.    Categorical → numeric encoding
-#3ci.	  Binary encoding: Frailty_binary (Y→1, N→0, store as int8).
+#3ci.     Binary encoding: Frailty_binary (Y→1, N→0, store as int8).
 df['Frailty_binary'] = (df['Frailty'] =='Y').astype('int8')
 
-#3cii.	One‑hot encode AgeGroup into columns: AgeGroup_<30, AgeGroup_30–45, AgeGroup_46–60, AgeGroup_>60
+#3cii.  One‑hot encode AgeGroup into columns: AgeGroup_<30, AgeGroup_30–45, AgeGroup_46–60, AgeGroup_>60
+print("HELP: What is one-hot encoding?")
 print('Help: Concept of OneHotEncode not fully understood - seek guidance')
 
 #3d.    EDA & Reporting
 #3di.   Compute summary table: mean/median/std for numeric columns; save to reports/findings.md
 
 df_summary = df.select_dtypes(include='number')
-for curSumCol in df_summary.columns:
-  df_summary[curSumCol+'_mean'] = np.mean(df[curSumCol])
-  df_summary[curSumCol+'_median'] = np.median(df[curSumCol])
-  df_summary[curSumCol+'_std'] = np.std(df[curSumCol])
-print("ToDo: save to reports/findings.md")
-print("Requirement: Determine how to output to dir with online tools which don't have access to file store. Possible misreading of requirement.")
-print("Help: Determine why a mark-down file was requested to output this, instead of .csv or .txt")
+summary_stats = df_summary.agg(['mean', 'median', 'std']).T
+summary_stats.columns = [f'{col}_{stat}' for stat in summary_stats.columns for col in ['']]
+
+folder_path = '/tmp/reports' # Changed directory to /tmp
+file_path = folder_path + '/findings.md'
+if not(os.path.isdir(folder_path)):
+  os.mkdir(folder_path)
+
+markdown_table = summary_stats.to_markdown() # Use the summary_stats DataFrame
+
+with open(file_path, 'w') as md_file:
+    md_file.write(markdown_table)
+
+print(f"Summary table saved to: {file_path}")
 
 #3dii.  Quantify relation of strength ↔ frailty:
 #        Compute correlation between Grip_kg and Frailty_binary, and report it.
@@ -70,4 +92,5 @@ correlation_matrix = np.corrcoef(df['Grip_kg'], df['Frailty_binary'])
 correlation_xy = correlation_matrix[0,1]
 print(f"Correlation between Grip (in kg) and Frailty: {correlation_xy}")
 
-df_summary
+#drive.flush_and_unmount()
+#df_summary
