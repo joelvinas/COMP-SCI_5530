@@ -74,9 +74,41 @@ plt.show()
 #B.	V2 — Test prep impact on math (2 pts)
 #a.	Question: Do students who completed test prep score higher in math?
 #b.	Chart: Any chart of your choice for math score by test preparation course (completed vs none).
-#C.	V3 — Lunch type and average performance (2 pts)
-#a.	Question: Does lunch type (standard vs free/reduced) relate to outcomes?
-#b.	Chart: Grouped bar chart of mean overall_avg of all the scores (math, reading, writing) by lunch.
+
+#C: Visualization #3 - Lunch type and average performance (2 pts)
+#Ca.	Question: Does lunch type (standard vs free/reduced) relate to outcomes?
+#Cb.	Chart: Grouped bar chart of mean overall_avg of all the scores (math, reading, writing) by lunch.
+
+std_lunch = q2df[q2df['lunch'] =='standard']
+free_lunch = q2df[q2df['lunch'] =='free/reduced']
+
+labels = ['Free/Reduced Lunch', 'Standard Lunch']
+mathing_means = [free_lunch['math score'].mean(),std_lunch['math score'].mean(),] 
+reading_means = [free_lunch['reading score'].mean(),std_lunch['reading score'].mean(),]
+writing_means = [free_lunch['writing score'].mean(),std_lunch['writing score'].mean()]
+
+x = np.arange(len(labels))  # the label locations
+width = 0.25  # the width of the bars
+
+dpi = 300
+figwidth = 800/dpi
+figheight = 600/dpi
+fig, ax = plt.subplots(figsize=(figwidth,figheight), dpi=300)
+rects1 = ax.bar(x - width, mathing_means, width, label='Math')
+rects2 = ax.bar(x, reading_means, width, label='Reading')
+rects3 = ax.bar(x + width, writing_means, width, label='Writing')
+
+JVinasComment = "JVinas Note: \nIt appears that lunch type is related to average score. \nAs lunch type is an indicator of financial resources of the student's home, there might be underlying factors."
+text = fig.text(0.45, 0.25, JVinasComment, horizontalalignment='left', wrap=True, bbox=dict(boxstyle='square,pad=0.5', fc='lightblue', ec='blue'))
+
+ax.set_ylabel('Scores')
+ax.set_title('Average Test Performance by Lunch Type')
+ax.set_xticks(x)
+ax.set_xticklabels(labels)
+ax.legend()
+plt.show()
+
+
 #D.	V4 — Subject correlations (2 pts)
 #a.	Question: How strongly do the three subjects move together?
 #b.	Chart: Correlation heatmap for math, reading, writing with annotated coefficients.
