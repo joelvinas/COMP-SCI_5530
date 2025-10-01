@@ -12,20 +12,16 @@ q2df=pd.read_csv('sample_data/StudentsPerformance.csv')
 #               We can add this step later, as it should be quite easy.
 
 
-#A.	V1 — Gender boxplots (math vs reading) (2 pts)
-#a.	Question: Are there gender differences in math vs reading?
-#b.	Chart: Side‑by‑side boxplots of math score and reading score grouped by gender.
-
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 #Question #2
 q2df=pd.read_csv('sample_data/StudentsPerformance.csv')
 
-
-#Gender boxplots (math vs reading) (2 pts)
-#a.	Question: Are there gender differences in math vs reading?
-#b.	Chart: Side‑by‑side boxplots of math score and reading score grouped by gender
+#------------------------------------------------------------------
+#A: Visualization #1 - Gender boxplots (math vs reading) (2 pts)
+#Aa.	Question: Are there gender differences in math vs reading?
+#Ab.	Chart: Side‑by‑side boxplots of math score and reading score grouped by gender
 
 #First, separate the data into male/female data frames
 pop_male = q2df[q2df['gender'] =='male']
@@ -70,11 +66,11 @@ text = fig.text(0.5, 0, JVinasComment, horizontalalignment='center', wrap=True, 
 plt.tight_layout()  #Use the tight layout to prevent overlapping titles/labels
 plt.rcParams.update({'font.size': 5})
 plt.show()
-
+#------------------------------------------------------------------
 #B.	V2 — Test prep impact on math (2 pts)
 #a.	Question: Do students who completed test prep score higher in math?
 #b.	Chart: Any chart of your choice for math score by test preparation course (completed vs none).
-
+#------------------------------------------------------------------
 #C: Visualization #3 - Lunch type and average performance (2 pts)
 #Ca.	Question: Does lunch type (standard vs free/reduced) relate to outcomes?
 #Cb.	Chart: Grouped bar chart of mean overall_avg of all the scores (math, reading, writing) by lunch.
@@ -107,11 +103,27 @@ ax.set_xticks(x)
 ax.set_xticklabels(labels)
 ax.legend()
 plt.show()
+#------------------------------------------------------------------
+#D:	Visualization #4 — Subject correlations (2 pts)
+#Da.	Question: How strongly do the three subjects move together?
+#Db.	Chart: Correlation heatmap for math, reading, writing with annotated coefficients.
 
+dpi = 300
+figwidth = 800/dpi
+figheight = 600/dpi
 
-#D.	V4 — Subject correlations (2 pts)
-#a.	Question: How strongly do the three subjects move together?
-#b.	Chart: Correlation heatmap for math, reading, writing with annotated coefficients.
+data = q2df[['math score','reading score','writing score']]
+correlation_matrix = data.corr()
+plt.figure(figsize=(figwidth, figheight),dpi=300)
+sns.heatmap(correlation_matrix, annot=True, cmap='vanimo', fmt=".2f", linewidths=.5)
+
+JVinasComment = "JVinas Note: \nReading & Writing are highly correlated. \nMath does not have a high correlation with other subjects."
+text = plt.text(0.5, 3.75, JVinasComment, horizontalalignment='left', wrap=True, bbox=dict(boxstyle='square,pad=0.5', fc='lightblue', ec='blue'), font={'size':3})
+
+plt.title('Correlation Heatmap for test scores')
+plt.show()
+
+#------------------------------------------------------------------
 #E.	V5 — Math vs reading with trend lines by test prep (2 pts)
 #a.	Question: How strongly are math and reading scores associated, and do students who completed the test‑preparation course have a different slope in the math–reading relationship than those who did not?
 #b.	Chart: Scatter plot with two straight best‑fit lines (one for each group: completed, none).
