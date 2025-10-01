@@ -48,24 +48,35 @@ df['BMI'] = round(df['Weight_kg'] / (df['Height_m'] ** 2),2)
 def AgeGroups(Age):
   if Age < 30:
     return "<30"
-  elif 30 <= Age < 45:
+  elif 30 <= Age < 46:
     return "30-45"
-  elif 45 <= Age < 60:
-    return "45-60"
-  elif Age >= 60:
+  elif 46 <= Age < 61:
+    return "46-60"
+  elif Age > 60:
     return ">60"
   else:
     return ""
 
 df['AgeGroup (categorical)'] = df['Age_yr'].apply(AgeGroups)
 
+print(df)
+
 #3c.    Categorical → numeric encoding
 #3ci.     Binary encoding: Frailty_binary (Y→1, N→0, store as int8).
 df['Frailty_binary'] = (df['Frailty'] =='Y').astype('int8')
 
 #3cii.  One‑hot encode AgeGroup into columns: AgeGroup_<30, AgeGroup_30–45, AgeGroup_46–60, AgeGroup_>60
-print("HELP: What is one-hot encoding?")
-print('Help: Concept of OneHotEncode not fully understood - seek guidance')
+# Initialize the OneHotEncoder
+# handle_unknown='ignore' prevents errors if unseen categories appear during transform
+encoder = OneHotEncoder(handle_unknown='ignore', sparse_output=False)
+
+# Fit the encoder to the 'AgeGroup' column and transform it
+# Reshape the column to a 2D array as required by OneHotEncoder
+encoded_agegroups = encoder.fit_transform(df[['AgeGroup (categorical)']])
+
+# Create a DataFrame from the encoded AgeGroups
+encoded_agegroups_df = pd.DataFrame(encoded_agegroups, columns=encoder.get_feature_names_out(['AgeGroup (categorical)']))
+print(encoded_agegroups_df)
 
 #3d.    EDA & Reporting
 #3di.   Compute summary table: mean/median/std for numeric columns; save to reports/findings.md
@@ -93,4 +104,3 @@ correlation_xy = correlation_matrix[0,1]
 print(f"Correlation between Grip (in kg) and Frailty: {correlation_xy}")
 
 #drive.flush_and_unmount()
-#df_summary
