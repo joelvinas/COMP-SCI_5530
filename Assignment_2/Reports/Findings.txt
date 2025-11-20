@@ -1,0 +1,15 @@
+==Random Sample==
+For the random sample of Glucose, the Max and Mean of the Sample were quite close to these metrics for the overall Population.
+This isn't always the case, but this random sample seemed to be indicative of the larger dataset.
+It is worth noting that the random sample had a smaller overall spread, despite being a smaller dataset.
+This clustering may be indicative of most values being clustered around the mean, with occasional samples in the larger population pushing the bounds.
+
+==Percentile==
+The 98th percentile of the BMI data was again, quite similar to the overall population.
+The chart of the data showed a distribution which was remarkably similar to the population as a whole.
+
+==Bootstrap==
+The bootstrap method provides a simple method to obtain a surprisingly accurate mean that is very close to the mean of the population.
+This is evidence of the central limit theorem, where for standard distribution data centralizes around the mean.
+Notably, the standard deviation for the bootstrap differs significantly from the population.
+This tight grouping suggests that the majority of the data is clustered around the mean.
